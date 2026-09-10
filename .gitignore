@@ -1,0 +1,23 @@
+# dependencies
+node_modules/
+extension/node_modules/
+
+# next.js
+.next/
+out/
+
+# env
+.env
+.env.local
+.env*.local
+
+# prisma
+prisma/dev.db
+
+# extension build output
+extension/*.vsix
+
+# misc
+.DS_Store
+*.log
+npm-debug.log*

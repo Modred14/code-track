@@ -1,0 +1,51 @@
+// Modred Coding Tracker — database schema
+//
+// Design notes:
+// - We store SESSIONS, not raw activity events. A session is a contiguous
+//   block of active coding time in one project + language.
+// - `updatedAt` doubles as "last heartbeat received at". Combined with
+//   `endedAt`, this lets us determine whether a session is still "live"
+//   without a separate boolean flag (see lib/sessions.js for the logic).
+// - `durationSeconds` is denormalized (endedAt - startedAt) so dashboard
+//   queries never need to recompute it from timestamps.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model CodingSession {
+  id              String   @id @default(cuid())
+
+  // When this block of active coding started / last had activity.
+  startedAt       DateTime
+  endedAt         DateTime
+
+  // Denormalized for fast aggregation queries. Always == endedAt - startedAt.
+  durationSeconds Int
+
+  project         String
+  language        String
+
+  // Identifies which machine/VS Code instance sent this, useful if you ever
+  // code from more than one computer and want to avoid double counting or
+  // want to see a per-machine breakdown. Optional.
+  clientId        String?
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Fast lookups for "find the currently-open session for this project+language"
+  @@index([project, language, updatedAt])
+  // Fast range queries for daily/weekly/monthly aggregation
+  @@index([startedAt])
+  @@index([endedAt])
+  // Fast per-language / per-project totals
+  @@index([language])
+  @@index([project])
+}

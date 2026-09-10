@@ -1,0 +1,69 @@
+{
+  "name": "modred-coding-tracker",
+  "displayName": "Modred Coding Tracker",
+  "description": "Tracks active coding time and reports it to your personal dashboard.",
+  "version": "1.0.0",
+  "publisher": "modred",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": ["Other"],
+  "activationEvents": ["onStartupFinished"],
+  "main": "./extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "modred.showTodayTime",
+        "title": "Modred: Show Today's Coding Time"
+      },
+      {
+        "command": "modred.startTracking",
+        "title": "Modred: Start Tracking"
+      },
+      {
+        "command": "modred.stopTracking",
+        "title": "Modred: Stop Tracking"
+      },
+      {
+        "command": "modred.openDashboard",
+        "title": "Modred: Open Activity Dashboard"
+      }
+    ],
+    "configuration": {
+      "title": "Modred Coding Tracker",
+      "properties": {
+        "modred.apiUrl": {
+          "type": "string",
+          "default": "http://localhost:3000",
+          "description": "Base URL of your Modred tracker API (no trailing slash)."
+        },
+        "modred.apiToken": {
+          "type": "string",
+          "default": "",
+          "description": "Bearer token for authenticating with your tracker API. Prefer setting MODRED_TRACKER_TOKEN as an environment variable instead of storing it here in plain settings."
+        },
+        "modred.dashboardUrl": {
+          "type": "string",
+          "default": "",
+          "description": "URL opened by 'Modred: Open Activity Dashboard' (defaults to <apiUrl>/activity)."
+        },
+        "modred.idleThresholdMinutes": {
+          "type": "number",
+          "default": 5,
+          "description": "Minutes of no activity before a session is considered idle."
+        },
+        "modred.heartbeatIntervalSeconds": {
+          "type": "number",
+          "default": 60,
+          "description": "How often to send a heartbeat while actively coding."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "package": "vsce package"
+  },
+  "devDependencies": {
+    "@vscode/vsce": "^2.32.0"
+  }
+}
