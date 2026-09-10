@@ -13,6 +13,7 @@ import {
   getProjectBreakdown,
   computeStreak,
 } from "../../../../lib/sessions.js";
+import { PUBLIC_CORS_HEADERS, corsPreflightResponse } from "../../../../lib/cors.js";
 
 const WEEKDAY_LABELS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
@@ -26,7 +27,20 @@ function isoWeekday(date, timeZone) {
 
 // GET /api/coding/stats
 // Public read-only aggregate endpoint for the dashboard.
+//
+// CORS: this is polled from track-vs.netlify.app itself AND from other
+// sites/pages (e.g. a personal homepage widget) that call the absolute URL
+// cross-origin. Without PUBLIC_CORS_HEADERS here, those cross-origin fetches
+// get blocked by the browser — and since callers often bundle this fetch
+// into a Promise.all with /api/coding/current, one blocked request silently
+// kills the whole batch, so neither endpoint's data shows up. Match the
+// same public, read-only CORS policy used by /api/coding/current.
 export const dynamic = "force-dynamic";
+
+export function OPTIONS() {
+  return corsPreflightResponse();
+}
+
 export async function GET() {
   try {
     const timeZone = getAppTimeZone();
@@ -83,23 +97,29 @@ export async function GET() {
       heatmap.push({ date: key, seconds: Math.round(heatmapTotals.get(key) || 0) });
     }
 
-    return NextResponse.json({
-      timeZone,
-      todayKey: dayKeyInTZ(now, timeZone),
-      weekly,
-      totals: {
-        last7Seconds,
-        last30Seconds,
-        currentMonthSeconds: monthSeconds,
-        allTimeSeconds,
+    return NextResponse.json(
+      {
+        timeZone,
+        todayKey: dayKeyInTZ(now, timeZone),
+        weekly,
+        totals: {
+          last7Seconds,
+          last30Seconds,
+          currentMonthSeconds: monthSeconds,
+          allTimeSeconds,
+        },
+        streakDays: streak,
+        languages,
+        projects,
+        heatmap,
       },
-      streakDays: streak,
-      languages,
-      projects,
-      heatmap,
-    });
+      { headers: PUBLIC_CORS_HEADERS }
+    );
   } catch (err) {
     console.error("[stats] failed:", err);
-    return NextResponse.json({ error: "Failed to load stats." }, { status: 503 });
+    return NextResponse.json(
+      { error: "Failed to load stats." },
+      { status: 503, headers: PUBLIC_CORS_HEADERS }
+    );
   }
 }
