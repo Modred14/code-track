@@ -26,6 +26,7 @@ function isoWeekday(date, timeZone) {
 
 // GET /api/coding/stats
 // Public read-only aggregate endpoint for the dashboard.
+export const dynamic = "force-dynamic";
 export async function GET() {
   try {
     const timeZone = getAppTimeZone();

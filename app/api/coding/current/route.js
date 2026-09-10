@@ -6,6 +6,7 @@ import { getTodayBounds } from "../../../../lib/timezone.js";
 // Public read-only endpoint used by the dashboard (polled every 30-60s).
 // No auth required to READ your own public dashboard data — only the
 // heartbeat endpoint (which WRITES data) requires the bearer token.
+export const dynamic = "force-dynamic";
 export async function GET() {
   try {
     const current = await getCurrentState();

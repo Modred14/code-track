@@ -4,17 +4,18 @@
   "private": true,
   "type": "module",
   "description": "Next.js backend + dashboard for the Modred Coding Tracker",
-  "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "prisma:generate": "prisma generate",
-    "prisma:migrate": "prisma migrate dev --name init",
-    "prisma:deploy": "prisma migrate deploy",
-    "prisma:studio": "prisma studio",
-    "lint": "eslint .",
-    "test": "node --test \"tests/**/*.test.js\""
-  },
+"scripts": {
+  "dev": "next dev",
+  "build": "prisma generate && next build",
+  "start": "next start",
+  "postinstall": "prisma generate",
+  "prisma:generate": "prisma generate",
+  "prisma:migrate": "prisma migrate dev --name init",
+  "prisma:deploy": "prisma migrate deploy",
+  "prisma:studio": "prisma studio",
+  "lint": "eslint .",
+  "test": "node --test"
+},
   "dependencies": {
     "@prisma/client": "^5.22.0",
     "next": "^14.2.35",

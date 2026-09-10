@@ -3,6 +3,7 @@ import { getTodayBounds } from "../../../../lib/timezone.js";
 import { getTotalSecondsInRange, listSessionsInRange } from "../../../../lib/sessions.js";
 
 // GET /api/coding/today
+export const dynamic = "force-dynamic";
 export async function GET() {
   try {
     const { start, end } = getTodayBounds();
