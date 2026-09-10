@@ -2,7 +2,7 @@
 
 import { formatDuration } from "../../lib/format.js";
 
-export default function WeeklyChart({ weekly }) {
+export default function WeeklyChart({ weekly, todayKey }) {
   if (!weekly || weekly.length === 0) {
     return <Placeholder />;
   }
@@ -15,7 +15,7 @@ export default function WeeklyChart({ weekly }) {
       <div className="mt-5 flex items-end gap-3 h-36">
         {weekly.map((d) => {
           const heightPct = Math.max(3, (d.seconds / max) * 100);
-          const isToday = d.date === todayKey();
+          const isToday = d.date === todayKey;
           return (
             <div key={d.date} className="flex flex-1 flex-col items-center gap-2">
               <div className="flex h-28 w-full items-end">
@@ -37,13 +37,6 @@ export default function WeeklyChart({ weekly }) {
       </div>
     </div>
   );
-}
-
-function todayKey() {
-  // Best-effort client-side "today" marker for highlighting; the source of
-  // truth for totals is always the server (APP_TIMEZONE-aware).
-  const d = new Date();
-  return d.toISOString().slice(0, 10);
 }
 
 function Placeholder() {

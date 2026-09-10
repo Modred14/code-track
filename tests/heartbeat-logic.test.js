@@ -123,3 +123,28 @@ test("isSessionLive: within grace window is live, beyond it is not", () => {
 test("isSessionLive: null session is never live", () => {
   assert.equal(isSessionLive(null, new Date(), 90), false);
 });
+
+test("a client timestamp ahead of the server clock is clamped to now, not recorded as-is", () => {
+  const now = new Date("2026-09-09T10:00:00Z");
+  const future = new Date("2026-09-09T10:04:00Z"); // 4 min of clock skew, within validate.js's 5-min allowance
+  const decision = decideHeartbeat(null, future, now);
+
+  assert.equal(decision.action, "create");
+  assert.equal(decision.startedAt.toISOString(), now.toISOString());
+  assert.equal(decision.endedAt.toISOString(), now.toISOString());
+});
+
+test("extending a session with a future-skewed timestamp caps endedAt/duration at the server's now", () => {
+  const existing = {
+    startedAt: new Date("2026-09-09T10:00:00Z"),
+    endedAt: new Date("2026-09-09T10:10:00Z"),
+    updatedAt: new Date("2026-09-09T10:10:00Z"),
+  };
+  const now = new Date("2026-09-09T10:11:00Z");
+  const skewedTimestamp = new Date("2026-09-09T10:15:00Z"); // 4 min ahead of server now
+  const decision = decideHeartbeat(existing, skewedTimestamp, now);
+
+  assert.equal(decision.action, "extend");
+  assert.equal(decision.endedAt.toISOString(), now.toISOString());
+  assert.equal(decision.durationSeconds, 11 * 60); // 10:00 -> 10:11, not 10:15
+});

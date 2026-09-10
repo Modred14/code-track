@@ -16,7 +16,7 @@ export default function StatsPanels() {
     <>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
         <div className="md:col-span-2">
-          <WeeklyChart weekly={data?.weekly} />
+          <WeeklyChart weekly={data?.weekly} todayKey={data?.todayKey} />
         </div>
         <StreakBadge streakDays={data?.streakDays} />
       </div>

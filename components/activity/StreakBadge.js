@@ -11,7 +11,7 @@ export default function StreakBadge({ streakDays }) {
           <div className="font-mono text-2xl font-medium tabular-nums text-zinc-50">
             {days}
           </div>
-          <div className="text-sm text-zinc-500">{days === 1 ? "day streak" : "day streak"}</div>
+          <div className="text-sm text-zinc-500">{days === 1 ? "day streak" : "days streak"}</div>
         </div>
       </div>
     </div>

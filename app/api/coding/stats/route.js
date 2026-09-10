@@ -84,6 +84,7 @@ export async function GET() {
 
     return NextResponse.json({
       timeZone,
+      todayKey: dayKeyInTZ(now, timeZone),
       weekly,
       totals: {
         last7Seconds,
