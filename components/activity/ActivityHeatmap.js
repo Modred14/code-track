@@ -3,7 +3,7 @@
 import { formatDuration } from "../../lib/format.js";
 
 // Bucket thresholds (seconds) mapping to 5 shades, GitHub-style.
-const BUCKETS = [0, 30 * 60, 2 * 3600, 4 * 3600, 6 * 3600];
+const BUCKETS = [0, 1, 30 * 60, 2 * 3600, 4 * 3600];
 const SHADE_CLASSES = [
   "bg-ink-700",
   "bg-accent/25",
